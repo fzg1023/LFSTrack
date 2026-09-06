@@ -1,0 +1,98 @@
+# LFSTrack — LasHeR 从零训练配置 (6ch: RGB 3ch + TIR 3ch)
+#
+# 架构同 4ch 版，仅输入通道改为 6 (RGB 3ch + TIR 3ch，patch embedding
+# in_chans=6)。训练超参与 4ch 版完全一致，便于公平对比。
+#
+#   - DROP_PATH_RATE: 0.2, WEIGHT_DECAY: 0.0005
+#   - LR 1e-4 (backbone x0.1), step 调度每 10 epoch 衰减 0.1
+#   - 每轮保存 checkpoint / 每轮验证 / 每轮自动测试 LasHeR 测试集
+DATA:
+  MAX_SAMPLE_INTERVAL: 200
+  MEAN:
+  - 0.485
+  - 0.456
+  - 0.406
+  SEARCH:
+    CENTER_JITTER: 3
+    FACTOR: 4.0
+    SCALE_JITTER: 0.25
+    SIZE: 384
+    NUMBER: 1
+  STD:
+  - 0.229
+  - 0.224
+  - 0.225
+  TEMPLATE:
+    CENTER_JITTER: 0
+    FACTOR: 2.0
+    SCALE_JITTER: 0
+    SIZE: 192
+    NUMBER: 2
+  TRAIN:
+    DATASETS_NAME:
+    - LasHeR_train
+    DATASETS_RATIO:
+    - 1
+    SAMPLE_PER_EPOCH: 60000
+  VAL:
+    DATASETS_NAME:
+    - LasHeR_val
+    DATASETS_RATIO:
+    - 1
+    SAMPLE_PER_EPOCH: 10000
+MODEL:
+  IN_CHANS: 6
+  PRETRAIN_FILE: "./DropTrack_k700_800E_alldata.pth.tar"
+  EXTRA_MERGER: False
+  RETURN_INTER: False
+  USE_LFN: True
+  LFN_NUM_ITERATIONS: 1
+  LFN_USE_ATTN_POOL: false
+  LFN_USE_CROSS_ATTN: false
+  LFN_USE_MULTISCALE_GATE: false
+  LFN_MULTILAYER: true
+  LFN_MID_LAYER: 7
+  LFN_3LAYER: false
+  BACKBONE:
+    TYPE: vit_base_patch16_224_single_stream
+    STRIDE: 16
+    CE_LOC: [3, 6, 9]
+    CE_KEEP_RATIO: [1, 1, 1]
+    CE_TEMPLATE_RANGE: 'CTR_POINT'
+    GATE_LAYERS: [9, 10, 11]
+  HEAD:
+    TYPE: CENTER
+    NUM_CHANNELS: 256
+TRAIN:
+  BACKBONE_MULTIPLIER: 0.1
+  DROP_PATH_RATE: 0.2
+  CE_START_EPOCH: 4
+  CE_WARM_EPOCH: 16
+  BATCH_SIZE: 16
+  EPOCH: 50
+  GIOU_WEIGHT: 2.0
+  L1_WEIGHT: 5.0
+  GRAD_CLIP_NORM: 0.1
+  LR: 0.0001
+  LR_DROP_EPOCH: 10
+  NUM_WORKER: 4
+  OPTIMIZER: ADAMW
+  PRINT_INTERVAL: 50
+  SCHEDULER:
+    TYPE: step
+    DECAY_RATE: 0.1
+  VAL_EPOCH_INTERVAL: 1
+  WEIGHT_DECAY: 0.0005
+  AMP: False
+  PROMPT:
+    TYPE: single_stream
+  FIX_BN: true
+  SAVE_EPOCH_INTERVAL: 1
+  SAVE_LAST_N_EPOCH: 50
+  TEST_EVERY_EPOCH: true
+TEST:
+  EPOCH: 50
+  SEARCH_FACTOR: 4.0
+  SEARCH_SIZE: 384
+  TEMPLATE_FACTOR: 2.0
+  TEMPLATE_SIZE: 192
