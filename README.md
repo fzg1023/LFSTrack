@@ -11,7 +11,7 @@ This repository is fully self-contained: it contains all training/testing code, 
 experiment configs, train/test scripts, the pretrained weights (DropTrack), and the
 dependency list.
 
-[Pretrained weights,modes and results](https://pan.baidu.com/s/1H7u0AHwlGXKvciUuxZcVZA?pwd=LFST)
+[Pretrained weights,models and results](https://pan.baidu.com/s/1H7u0AHwlGXKvciUuxZcVZA?pwd=LFST)
 
 ## Directory Structure
 
