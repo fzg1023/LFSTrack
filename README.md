@@ -11,6 +11,8 @@ This repository is fully self-contained: it contains all training/testing code, 
 experiment configs, train/test scripts, the pretrained weights (DropTrack), and the
 dependency list.
 
+[Pretrained weights](https://pan.baidu.com/s/10R6mwZK5wxBvoxCz7qW3tg?pwd=omni)
+
 ## Directory Structure
 
 ```
